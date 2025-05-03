@@ -1,20 +1,23 @@
 const mongoose = require('mongoose');
 
-const serviceItemSchema = new mongoose.Schema({
-  name: { type: String, required: true },
+const serviceTypeSchema = new mongoose.Schema({
+  type: { type: String, required: true },
   price: { type: String, required: true },
   warranty: { type: String, default: null },
 });
 
-const serviceSchema = new mongoose.Schema(
+const groupedServiceSchema = new mongoose.Schema({
+  name: { type: String, required: true }, // VD: Răng sữa
+  types: [serviceTypeSchema],
+});
+
+const structuredServiceSchema = new mongoose.Schema(
   {
-    category: { type: String, required: true },
-    services: [serviceItemSchema],
+    title: { type: String }, // VD: HÀN RĂNG
+    services: [groupedServiceSchema],
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
-const Service = mongoose.model('Service', serviceSchema);
+const Service = mongoose.model('Service', structuredServiceSchema);
 module.exports = Service;

@@ -10,6 +10,7 @@ const patientSchema = new mongoose.Schema(
     dateOfBirth: { type: Date, required: true },
     age: { type: Number },
     phone: { type: String, required: true, unique: true },
+    appointmentDate: { type: Date },
     address: { type: String, required: true },
     email: { type: String },
     medicalHistory: { type: String },
@@ -22,7 +23,6 @@ const patientSchema = new mongoose.Schema(
     nextAppointmentDate: { type: Date }, // Ngày tái khám
     cost: { type: Number, default: 0 },
   },
-
   {
     timestamps: true,
     versionKey: false,

@@ -2,10 +2,29 @@ const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
 const patientService = require('../services/patient.service');
 
-const createPatient = catchAsync(async (req, res) => {
-  const patient = await patientService.createPatient(req.body);
-  res.status(httpStatus.CREATED).json(patient);
-});
+const Patient = require('../models/patient.model');
+const MedicalRecord = require('../models/medicalRecord.model');
+
+const createPatient = async (req, res) => {
+  try {
+    const newPatient = await Patient.create(req.body);
+
+    // ➕ Tạo lịch sử khám khi tạo bệnh nhân mới
+    await MedicalRecord.create({
+      patientId: newPatient._id,
+      appointmentDate: newPatient.appointmentDate || new Date(),
+      nextAppointmentDate: newPatient.nextAppointmentDate || null,
+      medicalHistory: newPatient.medicalHistory || '',
+      note: newPatient.note || '',
+      cost: newPatient.cost || 0,
+      status: newPatient.status,
+    });
+
+    res.status(201).json(newPatient);
+  } catch (error) {
+    res.status(500).json({ message: 'Lỗi tạo bệnh nhân', error: error.message });
+  }
+};
 
 const getPatients = catchAsync(async (req, res) => {
   const patients = await patientService.getPatients();

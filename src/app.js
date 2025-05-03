@@ -13,6 +13,8 @@ const { jwtStrategy } = require('./config/passport');
 const { authLimiter } = require('./middlewares/rateLimiter');
 const routes = require('./routes/v1');
 const patientRoutes = require('./routes/v1/patient.route');
+const medicalRecordRoutes = require('./routes/v1/medicalRecord.route');
+
 const { errorConverter, errorHandler } = require('./middlewares/error');
 const ApiError = require('./utils/ApiError');
 
@@ -53,6 +55,7 @@ if (config.env === 'production') {
 // v1 api routes
 app.use('/v1', routes);
 app.use('/v1/patients', patientRoutes);
+app.use('/v1/medical-records', medicalRecordRoutes);
 
 app.get('/', (_req, res) => {
   res.send('Welcome to Node Express');
