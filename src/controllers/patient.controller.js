@@ -16,6 +16,7 @@ const createPatient = async (req, res) => {
       dateOfBirth,
       phone,
       address,
+      status: 'active',
     });
 
     res.status(httpStatus.CREATED).json(newPatient);
@@ -28,7 +29,7 @@ const createPatient = async (req, res) => {
 };
 
 const getPatients = catchAsync(async (req, res) => {
-  const patients = await patientService.getPatients();
+  const patients = await Patient.find({ status: 'active' });
   res.status(httpStatus.OK).json(patients);
 });
 
@@ -53,8 +54,11 @@ const updatePatient = catchAsync(async (req, res) => {
 });
 
 const deletePatient = catchAsync(async (req, res) => {
-  await patientService.deletePatient(req.params.id);
-  res.status(httpStatus.NO_CONTENT).send();
+  const updated = await Patient.findByIdAndUpdate(req.params.id, { status: 'inactive' }, { new: true });
+  if (!updated) {
+    return res.status(httpStatus.NOT_FOUND).json({ message: 'Không tìm thấy bệnh nhân để xóa' });
+  }
+  res.status(httpStatus.OK).json({ message: 'Bệnh nhân đã được chuyển sang trạng thái inactive' });
 });
 
 module.exports = {

@@ -9,6 +9,11 @@ const patientSchema = new mongoose.Schema(
     dateOfBirth: { type: Date, required: true },
     phone: { type: String, required: true, unique: true },
     address: { type: String, required: true },
+    status: {
+      type: String,
+      enum: ['active', 'inactive'],
+      default: 'active',
+    },
   },
   {
     timestamps: true,
