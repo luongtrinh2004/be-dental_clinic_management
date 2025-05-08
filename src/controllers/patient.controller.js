@@ -3,26 +3,27 @@ const catchAsync = require('../utils/catchAsync');
 const patientService = require('../services/patient.service');
 
 const Patient = require('../models/patient.model');
-const MedicalRecord = require('../models/medicalRecord.model');
 
+// ✔️ Tạo bệnh nhân (không cho phép truyền email và status)
 const createPatient = async (req, res) => {
   try {
-    const newPatient = await Patient.create(req.body);
+    // Chỉ lấy các trường được phép
+    const { name, gender, dateOfBirth, phone, address } = req.body;
 
-    // ➕ Tạo lịch sử khám khi tạo bệnh nhân mới
-    await MedicalRecord.create({
-      patientId: newPatient._id,
-      appointmentDate: newPatient.appointmentDate || new Date(),
-      nextAppointmentDate: newPatient.nextAppointmentDate || null,
-      medicalHistory: newPatient.medicalHistory || '',
-      note: newPatient.note || '',
-      cost: newPatient.cost || 0,
-      status: newPatient.status,
+    const newPatient = await Patient.create({
+      name,
+      gender,
+      dateOfBirth,
+      phone,
+      address,
     });
 
-    res.status(201).json(newPatient);
+    res.status(httpStatus.CREATED).json(newPatient);
   } catch (error) {
-    res.status(500).json({ message: 'Lỗi tạo bệnh nhân', error: error.message });
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+      message: 'Lỗi tạo bệnh nhân',
+      error: error.message,
+    });
   }
 };
 
@@ -37,7 +38,17 @@ const getPatientById = catchAsync(async (req, res) => {
 });
 
 const updatePatient = catchAsync(async (req, res) => {
-  const patient = await patientService.updatePatient(req.params.id, req.body);
+  // Giới hạn các trường cho phép cập nhật
+  const allowedFields = ['name', 'gender', 'dateOfBirth', 'phone', 'address'];
+  const updateData = {};
+
+  for (const field of allowedFields) {
+    if (req.body[field] !== undefined) {
+      updateData[field] = req.body[field];
+    }
+  }
+
+  const patient = await patientService.updatePatient(req.params.id, updateData);
   res.status(httpStatus.OK).json(patient);
 });
 
@@ -46,4 +57,10 @@ const deletePatient = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
-module.exports = { createPatient, getPatients, getPatientById, updatePatient, deletePatient };
+module.exports = {
+  createPatient,
+  getPatients,
+  getPatientById,
+  updatePatient,
+  deletePatient,
+};

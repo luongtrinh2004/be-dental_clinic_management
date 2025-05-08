@@ -11,65 +11,63 @@ const config = require('./config/config');
 const morgan = require('./config/morgan');
 const { jwtStrategy } = require('./config/passport');
 const { authLimiter } = require('./middlewares/rateLimiter');
+
 const routes = require('./routes/v1');
-const patientRoutes = require('./routes/v1/patient.route');
-const medicalRecordRoutes = require('./routes/v1/medicalRecord.route');
+
+// const patientRoutes = require('./routes/v1/patient.route');
+// const medicalRecordRoutes = require('./routes/v1/medicalRecord.route');
 
 const { errorConverter, errorHandler } = require('./middlewares/error');
 const ApiError = require('./utils/ApiError');
 
 const app = express();
 
+// Logging
 app.use(morgan.successHandler);
 app.use(morgan.errorHandler);
 
-// set security HTTP headers
+// Bảo mật headers
 app.use(helmet());
 
-// parse json request body
+// Body parsers
 app.use(express.json());
-
-// parse urlencoded request body
 app.use(express.urlencoded({ extended: true }));
 
-// sanitize request data
+// Ngăn XSS và NoSQL injection
 app.use(xss());
 app.use(mongoSanitize());
 
-// gzip compression
+// Nén dữ liệu
 app.use(compression());
 
-// enable cors
+// Cho phép CORS
 app.use(cors());
 app.options('*', cors());
 
-// jwt authentication
+// Xác thực JWT
 app.use(passport.initialize());
 passport.use('jwt', jwtStrategy);
 
-// limit repeated failed requests to auth endpoints
+// Giới hạn request sai nếu production
 if (config.env === 'production') {
   app.use('/v1/auth', authLimiter);
 }
 
-// v1 api routes
+//Dùng route tổng
 app.use('/v1', routes);
-app.use('/v1/patients', patientRoutes);
-app.use('/v1/medical-records', medicalRecordRoutes);
 
+// Route mặc định
 app.get('/', (_req, res) => {
   res.send('Welcome to Node Express');
 });
 
-// send back a 404 error for any unknown api request
+// Route không tồn tại
 app.use((_req, _res, next) => {
   next(new ApiError(httpStatus.NOT_FOUND, 'Not found'));
 });
 
-// convert error to ApiError, if needed
+// Xử lý lỗi
 app.use(errorConverter);
-
-// handle error
 app.use(errorHandler);
 
 module.exports = app;
