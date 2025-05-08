@@ -4,10 +4,8 @@ const patientService = require('../services/patient.service');
 
 const Patient = require('../models/patient.model');
 
-// ✔️ Tạo bệnh nhân (không cho phép truyền email và status)
 const createPatient = async (req, res) => {
   try {
-    // Chỉ lấy các trường được phép
     const { name, gender, dateOfBirth, phone, address } = req.body;
 
     const newPatient = await Patient.create({

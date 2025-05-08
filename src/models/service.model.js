@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const serviceTypeSchema = new mongoose.Schema({
-  type: { type: String, required: true },
+  type: { type: String, required: false },
   price: { type: String, required: true },
   warranty: { type: String, default: null },
 });
