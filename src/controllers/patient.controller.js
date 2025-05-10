@@ -1,67 +1,45 @@
+/* eslint-disable no-restricted-syntax */
 const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
-const patientService = require('../services/patient.service');
+const { patientService } = require('../services');
 
 const Patient = require('../models/patient.model');
+const pick = require('../utils/pick');
 
-const createPatient = async (req, res) => {
-  try {
-    const { name, gender, dateOfBirth, phone, address } = req.body;
+const createPatient = catchAsync(async (req, res) => {
+  const result = await patientService.createPatient(req.body);
+  res.send(result);
+});
 
-    const newPatient = await Patient.create({
-      name,
-      gender,
-      dateOfBirth,
-      phone,
-      address,
-      status: 'active',
-    });
+const queryPatients = catchAsync(async (req, res) => {
+  const filter = pick(req.query, ['searchTerm']);
+  const options = {
+    ...pick(req.query, ['sortBy', 'limit', 'page']),
+    searchFields: ['patientCode', 'name', 'phone'],
+  };
 
-    res.status(httpStatus.CREATED).json(newPatient);
-  } catch (error) {
-    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
-      message: 'Lỗi tạo bệnh nhân',
-      error: error.message,
-    });
-  }
-};
-
-const getPatients = catchAsync(async (req, res) => {
-  const patients = await Patient.find({ status: 'active' });
-  res.status(httpStatus.OK).json(patients);
+  const result = await patientService.queryPatients(filter, options);
+  res.send(result);
 });
 
 const getPatientById = catchAsync(async (req, res) => {
   const patient = await patientService.getPatientById(req.params.id);
-  res.status(httpStatus.OK).json(patient);
+  res.send(patient);
 });
 
 const updatePatient = catchAsync(async (req, res) => {
-  // Giới hạn các trường cho phép cập nhật
-  const allowedFields = ['name', 'gender', 'dateOfBirth', 'phone', 'address'];
-  const updateData = {};
-
-  for (const field of allowedFields) {
-    if (req.body[field] !== undefined) {
-      updateData[field] = req.body[field];
-    }
-  }
-
-  const patient = await patientService.updatePatient(req.params.id, updateData);
-  res.status(httpStatus.OK).json(patient);
+  const result = await patientService.updatePatient(req.params.patientId, req.body);
+  res.send(result);
 });
 
 const deletePatient = catchAsync(async (req, res) => {
-  const updated = await Patient.findByIdAndUpdate(req.params.id, { status: 'inactive' }, { new: true });
-  if (!updated) {
-    return res.status(httpStatus.NOT_FOUND).json({ message: 'Không tìm thấy bệnh nhân để xóa' });
-  }
-  res.status(httpStatus.OK).json({ message: 'Bệnh nhân đã được chuyển sang trạng thái inactive' });
+  const result = await patientService.deletePatient(req.params.patientId);
+  res.status(httpStatus.NO_CONTENT).send(result);
 });
 
 module.exports = {
   createPatient,
-  getPatients,
+  queryPatients,
   getPatientById,
   updatePatient,
   deletePatient,
