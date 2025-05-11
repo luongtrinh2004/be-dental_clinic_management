@@ -23,7 +23,7 @@ const queryPatients = catchAsync(async (req, res) => {
 });
 
 const getPatientById = catchAsync(async (req, res) => {
-  const patient = await patientService.getPatientById(req.params.id);
+  const patient = await patientService.getPatientById(req.params.patientId);
   res.send(patient);
 });
 
@@ -34,7 +34,7 @@ const updatePatient = catchAsync(async (req, res) => {
 
 const deletePatient = catchAsync(async (req, res) => {
   const result = await patientService.deletePatient(req.params.patientId);
-  res.status(httpStatus.NO_CONTENT).send(result);
+  res.status(httpStatus.OK).send(result);
 });
 
 module.exports = {

@@ -14,7 +14,8 @@ router
 router
   .route('/:patientId')
   .get(patientController.getPatientById)
-  .patch(patientController.updatePatient)
-  .delete(patientController.deletePatient);
+
+  .patch(auth('admin', 'user'), validate(patientValidation.updatePatient), patientController.updatePatient)
+  .delete(auth('admin', 'user'), validate(patientValidation.deletePatient), patientController.deletePatient);
 
 module.exports = router;
