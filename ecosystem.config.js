@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: 'Server',
+      name: 'RHM-Server',
       script: './src/index.js',
       instances: '1',
       autorestart: true,
