@@ -13,7 +13,7 @@ router
 
 router
   .route('/:patientId')
-  .get(patientController.getPatientById)
+  .get(auth('admin', 'user'), validate(patientValidation.getPatient), patientController.getPatientById)
 
   .patch(auth('admin', 'user'), validate(patientValidation.updatePatient), patientController.updatePatient)
   .delete(auth('admin', 'user'), validate(patientValidation.deletePatient), patientController.deletePatient);

@@ -1,26 +1,43 @@
-const serviceService = require('../services/service.service');
+const httpStatus = require('http-status');
+const catchAsync = require('../utils/catchAsync');
+const ApiError = require('../utils/ApiError');
+const { serviceService } = require('../services');
 
-exports.getAll = async (req, res) => {
+const getAll = catchAsync(async (req, res) => {
   const services = await serviceService.getAll();
-  res.json(services);
-};
+  res.send(services);
+});
 
-exports.getById = async (req, res) => {
+const getById = catchAsync(async (req, res) => {
   const service = await serviceService.getById(req.params.id);
-  res.json(service);
-};
+  if (!service) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Không tìm thấy dịch vụ');
+  }
+  res.send(service);
+});
 
-exports.create = async (req, res) => {
+const create = catchAsync(async (req, res) => {
   const newService = await serviceService.create(req.body);
-  res.status(201).json(newService);
-};
+  res.status(httpStatus.CREATED).send(newService);
+});
 
-exports.update = async (req, res) => {
+const update = catchAsync(async (req, res) => {
   const updated = await serviceService.update(req.params.id, req.body);
-  res.json(updated);
-};
+  if (!updated) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Không tìm thấy dịch vụ để cập nhật');
+  }
+  res.send(updated);
+});
 
-exports.remove = async (req, res) => {
+const remove = catchAsync(async (req, res) => {
   await serviceService.remove(req.params.id);
-  res.status(204).end();
+  res.status(httpStatus.NO_CONTENT).send();
+});
+
+module.exports = {
+  getAll,
+  getById,
+  create,
+  update,
+  remove,
 };

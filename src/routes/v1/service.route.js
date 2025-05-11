@@ -1,12 +1,21 @@
 const express = require('express');
-const controller = require('../../controllers/service.controller');
+const { serviceController } = require('../../controllers');
+const auth = require('../../middlewares/auth');
+const validate = require('../../middlewares/validate');
+const { serviceValidation } = require('../../validations');
 
 const router = express.Router();
 
-router.get('/', controller.getAll);
-router.get('/:id', controller.getById);
-router.post('/', controller.create);
-router.put('/:id', controller.update);
-router.delete('/:id', controller.remove);
+router.get('/', auth('admin', 'user'), serviceController.getAll);
+router.get('/:id', auth('admin', 'user'), validate(serviceValidation.serviceIdParam), serviceController.getById);
+router.post('/', auth('admin', 'user'), validate(serviceValidation.createOrUpdateService), serviceController.create);
+router.put(
+  '/:id',
+  auth('admin', 'user'),
+  validate(serviceValidation.serviceIdParam),
+  validate(serviceValidation.createOrUpdateService),
+  serviceController.update
+);
+router.delete('/:id', auth('admin', 'user'), validate(serviceValidation.serviceIdParam), serviceController.remove);
 
 module.exports = router;
