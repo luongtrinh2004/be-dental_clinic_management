@@ -1,12 +1,12 @@
 const Joi = require('joi');
 
 const serviceTypeSchema = Joi.object({
-  type: Joi.string().allow(null, '').optional(),
+  type: Joi.string().allow(null, '').optional(), // ❗ Không bắt buộc
   price: Joi.string().required().messages({
     'any.required': 'Thiếu giá dịch vụ.',
     'string.base': 'Giá dịch vụ phải là chuỗi.',
   }),
-  warranty: Joi.string().allow(null, '').optional(),
+  warranty: Joi.string().allow(null, '').optional(), // ❗ Không bắt buộc
 });
 
 const groupedServiceSchema = Joi.object({
@@ -18,20 +18,7 @@ const groupedServiceSchema = Joi.object({
 
 const createOrUpdateService = {
   body: Joi.object({
-    title: Joi.string().required().messages({
-      'any.required': 'Thiếu tiêu đề dịch vụ.',
-    }),
+    title: Joi.string().allow(null, '').optional(), // ❗ Không bắt buộc
     services: Joi.array().items(groupedServiceSchema).required(),
   }),
-};
-
-const serviceIdParam = {
-  params: Joi.object({
-    serviceId: Joi.string().hex().length(24).required(),
-  }),
-};
-
-module.exports = {
-  createOrUpdateService,
-  serviceIdParam,
 };
