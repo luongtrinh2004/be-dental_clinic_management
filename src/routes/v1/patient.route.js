@@ -8,14 +8,14 @@ const router = express.Router();
 
 router
   .route('/')
-  .post(auth('admin', 'user'), validate(patientValidation.createPatient), patientController.createPatient)
-  .get(auth('admin', 'user'), validate(patientValidation.queryPatients), patientController.queryPatients);
+  .post(auth('admin', 'staff'), validate(patientValidation.createPatient), patientController.createPatient)
+  .get(auth('admin', 'staff'), validate(patientValidation.queryPatients), patientController.queryPatients);
 
 router
   .route('/:patientId')
-  .get(auth('admin', 'user'), validate(patientValidation.getPatient), patientController.getPatientById)
+  .get(auth('admin', 'staff'), validate(patientValidation.getPatient), patientController.getPatientById)
 
-  .patch(auth('admin', 'user'), validate(patientValidation.updatePatient), patientController.updatePatient)
-  .delete(auth('admin', 'user'), validate(patientValidation.deletePatient), patientController.deletePatient);
+  .patch(auth('admin', 'staff'), validate(patientValidation.updatePatient), patientController.updatePatient)
+  .delete(auth('admin', 'staff'), validate(patientValidation.deletePatient), patientController.deletePatient);
 
 module.exports = router;

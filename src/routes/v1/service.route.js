@@ -6,16 +6,19 @@ const { serviceValidation } = require('../../validations');
 
 const router = express.Router();
 
-router.get('/', auth('admin', 'user'), serviceController.getAll);
-router.get('/:serviceId', auth('admin', 'user'), validate(serviceValidation.serviceIdParam), serviceController.getById);
-router.post('/', auth('admin', 'user'), validate(serviceValidation.createOrUpdateService), serviceController.create);
+router
+  .route('/')
+  .get(auth('admin', 'staff'), serviceController.getAll)
+  .post(auth('admin', 'staff'), validate(serviceValidation.createOrUpdateService), serviceController.create);
+
+router.get('/:serviceId', auth('admin', 'staff'), validate(serviceValidation.serviceIdParam), serviceController.getById);
 router.put(
   '/:serviceId',
-  auth('admin', 'user'),
+  auth('admin', 'staff'),
   validate(serviceValidation.serviceIdParam),
   validate(serviceValidation.createOrUpdateService),
   serviceController.update
 );
-router.delete('/:serviceId', auth('admin', 'user'), validate(serviceValidation.serviceIdParam), serviceController.remove);
+router.delete('/:serviceId', auth('admin', 'staff'), validate(serviceValidation.serviceIdParam), serviceController.remove);
 
 module.exports = router;

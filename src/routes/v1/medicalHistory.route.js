@@ -9,16 +9,16 @@ const router = express.Router();
 router
   .route('/')
   .post(
-    auth('admin', 'user'),
+    auth('admin', 'staff'),
     validate(medicalHistoryValidation.createMedicalHistory),
     medicalHistoryController.createMedicalHistory
   )
-  .get(auth('admin', 'user'), medicalHistoryController.getAllMedicalHistories);
+  .get(auth('admin', 'staff'), medicalHistoryController.getAllMedicalHistories);
 
 router
   .route('/patient/:patientId')
   .get(
-    auth('admin', 'user'),
+    auth('admin', 'staff'),
     validate(medicalHistoryValidation.getByPatient),
     medicalHistoryController.getHistoriesByPatientId
   );
@@ -26,12 +26,12 @@ router
 router
   .route('/:id')
   .patch(
-    auth('admin', 'user'),
+    auth('admin', 'staff'),
     validate(medicalHistoryValidation.updateMedicalHistory),
     medicalHistoryController.updateMedicalHistory
   )
   .delete(
-    auth('admin', 'user'),
+    auth('admin', 'staff'),
     validate(medicalHistoryValidation.getOrDelete),
     medicalHistoryController.deleteMedicalHistory
   );
