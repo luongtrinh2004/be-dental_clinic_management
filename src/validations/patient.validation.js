@@ -60,6 +60,9 @@ const queryPatients = {
 
 // @route PATCH /v1/patients/:patientId
 const updatePatient = {
+  params: Joi.object({
+    patientId: objectId().required(),
+  }),
   body: Joi.object({
     name: Joi.string().min(2).max(100),
     gender: Joi.number().valid(0, 1, 2),
@@ -74,14 +77,14 @@ const updatePatient = {
 // @route GET /v1/patients/:patientId
 const getPatient = {
   params: Joi.object({
-    patientId: Joi.string().custom(objectId),
+    patientId: objectId().required(),
   }),
 };
 
 // @route DELETE /v1/patients/:patientId
 const deletePatient = {
   params: Joi.object({
-    patientId: Joi.string().custom(objectId),
+    patientId: objectId().required(),
   }),
 };
 
