@@ -55,7 +55,7 @@ app.use('/v1', routes);
 
 // Route mặc định
 app.get('/', (_req, res) => {
-  res.send('Welcome to Node Express');
+  res.send('Welcome to the universe MP-LG API');
 });
 
 // Route không tồn tại

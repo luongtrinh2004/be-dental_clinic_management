@@ -34,9 +34,10 @@ const getPatientById = async (id) => {
 
 const updatePatient = async (id, updateData) => {
   const patient = await getPatientById(id);
-  // TODO: Check if phone number already exists
-  if (updateData.phone && (await Patient.isPhoneExist(updateData.phone, id))) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Số điện thoại đã tồn tại');
+  if (updateData.phone && updateData.phone !== patient.phone) {
+    if (await Patient.isPhoneExist(updateData.phone, id)) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Số điện thoại đã tồn tại');
+    }
   }
 
   const updatedPatient = await Patient.findByIdAndUpdate(id, updateData, { new: true });
@@ -47,7 +48,7 @@ const deletePatient = async (id) => {
   const patient = await getPatientById(id); // kiểm tra tồn tại
 
   if (patient.status === 'inactive') {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Bệnh nhân đã bị vô hiệu hóa.');
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Bệnh nhân đã bị vô hiệu hóa');
   }
 
   patient.status = 'inactive';

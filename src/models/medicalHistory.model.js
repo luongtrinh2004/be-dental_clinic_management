@@ -15,5 +15,5 @@ const medicalHistorySchema = new mongoose.Schema(
   }
 );
 
-const MedicalHistory = mongoose.model('MedicalHistory', medicalHistorySchema);
+const MedicalHistory = mongoose.model('MedicalHistory', medicalHistorySchema, 'medical_histories');
 module.exports = MedicalHistory;

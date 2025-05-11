@@ -27,7 +27,7 @@ const createOrUpdateService = {
 
 const serviceIdParam = {
   params: Joi.object({
-    id: Joi.string().hex().length(24).required(),
+    serviceId: Joi.string().hex().length(24).required(),
   }),
 };
 

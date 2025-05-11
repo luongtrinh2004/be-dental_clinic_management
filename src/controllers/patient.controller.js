@@ -2,8 +2,6 @@
 const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
 const { patientService } = require('../services');
-
-const Patient = require('../models/patient.model');
 const pick = require('../utils/pick');
 
 const createPatient = catchAsync(async (req, res) => {

@@ -9,7 +9,7 @@ const getAll = catchAsync(async (req, res) => {
 });
 
 const getById = catchAsync(async (req, res) => {
-  const service = await serviceService.getById(req.params.id);
+  const service = await serviceService.getById(req.params.serviceId);
   if (!service) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Không tìm thấy dịch vụ');
   }
@@ -22,7 +22,7 @@ const create = catchAsync(async (req, res) => {
 });
 
 const update = catchAsync(async (req, res) => {
-  const updated = await serviceService.update(req.params.id, req.body);
+  const updated = await serviceService.update(req.params.serviceId, req.body);
   if (!updated) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Không tìm thấy dịch vụ để cập nhật');
   }
@@ -30,7 +30,7 @@ const update = catchAsync(async (req, res) => {
 });
 
 const remove = catchAsync(async (req, res) => {
-  await serviceService.remove(req.params.id);
+  await serviceService.remove(req.params.serviceId);
   res.status(httpStatus.NO_CONTENT).send();
 });
 
