@@ -1,23 +1,60 @@
-const Patient = require('../models/patient.model');
+const httpStatus = require('http-status');
+const { Patient } = require('../models');
+const ApiError = require('../utils/ApiError');
 
-const createPatient = async (patientData) => {
-  return await Patient.create(patientData);
+const createPatient = async (body) => {
+  const { phone } = body;
+
+  // Check if phone number already exists
+  if (await Patient.isPhoneExist(phone)) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Số điện thoại đã tồn tại');
+  }
+
+  const newPatient = await Patient.create(body);
+  return newPatient;
 };
 
-const getPatients = async () => {
-  return await Patient.find();
+const queryPatients = async (filter, options) => {
+  const finalFilter = { ...filter };
+
+  if (!finalFilter.status) {
+    finalFilter.status = 'active';
+  }
+
+  return Patient.paginate(finalFilter, options);
 };
 
 const getPatientById = async (id) => {
-  return await Patient.findById(id);
+  const patient = await Patient.findById(id);
+  if (!patient) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Bệnh nhân không tồn tại');
+  }
+  return patient;
 };
 
 const updatePatient = async (id, updateData) => {
-  return await Patient.findByIdAndUpdate(id, updateData, { new: true });
+  const patient = await getPatientById(id);
+  if (updateData.phone && updateData.phone !== patient.phone) {
+    if (await Patient.isPhoneExist(updateData.phone, id)) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Số điện thoại đã tồn tại');
+    }
+  }
+
+  const updatedPatient = await Patient.findByIdAndUpdate(id, updateData, { new: true });
+  return updatedPatient;
 };
 
 const deletePatient = async (id) => {
-  return await Patient.findByIdAndDelete(id);
+  const patient = await getPatientById(id); // kiểm tra tồn tại
+
+  if (patient.status === 'inactive') {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Bệnh nhân đã bị vô hiệu hóa');
+  }
+
+  patient.status = 'inactive';
+  await patient.save();
+
+  return patient;
 };
 
-module.exports = { createPatient, getPatients, getPatientById, updatePatient, deletePatient };
+module.exports = { createPatient, queryPatients, getPatientById, updatePatient, deletePatient };

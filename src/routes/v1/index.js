@@ -14,7 +14,7 @@ const defaultRoutes = [
   { path: '/users', route: userRoute },
   { path: '/services', route: serviceRoute },
   { path: '/patients', route: patientRoute },
-  { path: '/medical-history', route: medicalHistoryRoute },
+  { path: '/medical-histories', route: medicalHistoryRoute },
 ];
 
 defaultRoutes.forEach((route) => {

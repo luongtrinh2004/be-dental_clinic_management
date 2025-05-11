@@ -14,9 +14,6 @@ const { authLimiter } = require('./middlewares/rateLimiter');
 
 const routes = require('./routes/v1');
 
-// const patientRoutes = require('./routes/v1/patient.route');
-// const medicalRecordRoutes = require('./routes/v1/medicalRecord.route');
-
 const { errorConverter, errorHandler } = require('./middlewares/error');
 const ApiError = require('./utils/ApiError');
 
@@ -53,12 +50,12 @@ if (config.env === 'production') {
   app.use('/v1/auth', authLimiter);
 }
 
-//Dùng route tổng
+// Dùng route tổng
 app.use('/v1', routes);
 
 // Route mặc định
 app.get('/', (_req, res) => {
-  res.send('Welcome to Node Express');
+  res.send('Welcome to the universe MP-LG API');
 });
 
 // Route không tồn tại
